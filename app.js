@@ -15,6 +15,28 @@ const server = http.createServer(function(req, res) {
       res.writeHead( 200, { "Content-Type": "text/html; charset=utf-8" } );
       res.write(joinPage);
       res.end();
+    } else if(req.url === "/list") {
+      res.writeHead( 200, { "Content-Type": "text/html; charset=utf-8" } );
+      let listData = "";
+      loginData.forEach(function(users) {
+        listData += `<p>이름 : ${users.name}</p>
+        <p>비밀번호 : ${users.password}</p>`
+      });
+      const listPage = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>조회화면</title>
+</head>
+<body>
+  <h1>현재 로그인 가능한 유저 목록</h1>
+  ${listData}
+  <button type="button" onclick="location.href='/'">홈으로</button>
+</body>
+</html>`;
+      res.write(listPage);
+      res.end();
     }
   }
   if(req.method === "POST") {
@@ -23,7 +45,6 @@ const server = http.createServer(function(req, res) {
       let dataObj;
       req.on("data", function(data) {
         body += data;
-        console.log(qs.parse(body)); // 문자열을 JSON Obj형식으로 변환
         dataObj = qs.parse(body);
       });
       req.on("end", function() {
